@@ -103,14 +103,13 @@ defaults para `localhost`).
 
 ## Usuários de teste (seed)
 
-O `data.sql` do `agendamento-service` já popula os seguintes usuários (senha
-= login, ex.: usuário `medico` com senha `medico`):
+O `data.sql` do `agendamento-service` já popula os seguintes usuários:
 
 | Login | Senha | Perfil |
 |---|---|---|
-| `medico` | `medico` | MEDICO |
-| `enfermeiro` | `enfermeiro` | ENFERMEIRO |
-| `paciente` | `paciente` | PACIENTE |
+| `medico` | `medico123` | MEDICO |
+| `enfermeiro` | `enfermeiro123` | ENFERMEIRO |
+| `paciente` | `paciente123` | PACIENTE |
 
 O `notificacao-service` usa um usuário de serviço fixo (STAFF) para consultar
 os lembretes enviados: `staff` / `staff123` (configurável via
