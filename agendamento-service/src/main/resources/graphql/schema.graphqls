@@ -1,0 +1,25 @@
+type Consulta {
+    id: ID!
+    pacienteId: ID!
+    medicoId: ID!
+    dataHora: String!
+    status: StatusConsulta!
+    observacoes: String
+    dataCriacao: String
+    dataAtualizacao: String
+}
+
+enum StatusConsulta {
+    AGENDADA
+    REALIZADA
+    CANCELADA
+}
+
+type Query {
+    "Retorna o historico completo (passado e futuro) de consultas de um paciente"
+    historicoPorPaciente(pacienteId: ID!): [Consulta!]!
+    "Retorna apenas as consultas futuras e agendadas de um paciente"
+    consultasFuturasPorPaciente(pacienteId: ID!): [Consulta!]!
+    "Busca uma consulta especifica pelo id"
+    consulta(id: ID!): Consulta
+}

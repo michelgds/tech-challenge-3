@@ -1,0 +1,93 @@
+services:
+  agendamento-db:
+    image: postgres:16-alpine
+    container_name: tech-challenge-3-agendamento-db
+    environment:
+      POSTGRES_DB: agendamento
+      POSTGRES_USER: agendamento
+      POSTGRES_PASSWORD: agendamento
+    ports:
+      - "5434:5432"
+    volumes:
+      - agendamento_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agendamento -d agendamento"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  notificacao-db:
+    image: postgres:16-alpine
+    container_name: tech-challenge-3-notificacao-db
+    environment:
+      POSTGRES_DB: notificacao
+      POSTGRES_USER: notificacao
+      POSTGRES_PASSWORD: notificacao
+    ports:
+      - "5435:5432"
+    volumes:
+      - notificacao_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notificacao -d notificacao"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: tech-challenge-3-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  agendamento-service:
+    build: ./agendamento-service
+    container_name: tech-challenge-3-agendamento-service
+    ports:
+      - "8081:8081"
+    environment:
+      DB_URL: jdbc:postgresql://agendamento-db:5432/agendamento
+      DB_USERNAME: agendamento
+      DB_PASSWORD: agendamento
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+    depends_on:
+      agendamento-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  notificacao-service:
+    build: ./notificacao-service
+    container_name: tech-challenge-3-notificacao-service
+    ports:
+      - "8082:8082"
+    environment:
+      DB_URL: jdbc:postgresql://notificacao-db:5432/notificacao
+      DB_USERNAME: notificacao
+      DB_PASSWORD: notificacao
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+      NOTIFICACAO_USERNAME: staff
+      NOTIFICACAO_PASSWORD: staff123
+    depends_on:
+      notificacao-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+volumes:
+  agendamento_data:
+  notificacao_data:

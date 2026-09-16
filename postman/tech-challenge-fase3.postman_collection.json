@@ -1,0 +1,325 @@
+{
+  "info": {
+    "_postman_id": "d4d9a1a0-3f4e-4b2a-9c1b-tc3fase3col01",
+    "name": "Tech Challenge - Fase 3 (Agendamento Hospitalar)",
+    "description": "Collection para testar os serviços de agendamento (REST + GraphQL) e notificação, incluindo autenticação e controle de acesso por perfil (MEDICO, ENFERMEIRO, PACIENTE).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Usuários",
+      "item": [
+        {
+          "name": "Cadastrar médico",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{agendamentoBaseUrl}}/v1/usuarios", "host": ["{{agendamentoBaseUrl}}"], "path": ["v1", "usuarios"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Dr. Novo Medico\",\n  \"email\": \"novo.medico@hospital.com\",\n  \"login\": \"medico2\",\n  \"senha\": \"senha123\",\n  \"role\": \"MEDICO\",\n  \"especialidade\": \"Ortopedia\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Cadastrar enfermeiro",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{agendamentoBaseUrl}}/v1/usuarios", "host": ["{{agendamentoBaseUrl}}"], "path": ["v1", "usuarios"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Novo Enfermeiro\",\n  \"email\": \"novo.enfermeiro@hospital.com\",\n  \"login\": \"enfermeiro2\",\n  \"senha\": \"senha123\",\n  \"role\": \"ENFERMEIRO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Cadastrar paciente",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{agendamentoBaseUrl}}/v1/usuarios", "host": ["{{agendamentoBaseUrl}}"], "path": ["v1", "usuarios"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Novo Paciente\",\n  \"email\": \"novo.paciente@email.com\",\n  \"login\": \"paciente2\",\n  \"senha\": \"senha123\",\n  \"role\": \"PACIENTE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar usuários (autenticado)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{medicoLogin}}", "type": "string" }, { "key": "password", "value": "{{medicoSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/v1/usuarios?page=1&size=10", "host": ["{{agendamentoBaseUrl}}"], "path": ["v1", "usuarios"], "query": [ { "key": "page", "value": "1" }, { "key": "size", "value": "10" } ] }
+          }
+        },
+        {
+          "name": "Buscar usuário por id",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{medicoLogin}}", "type": "string" }, { "key": "password", "value": "{{medicoSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/v1/usuarios/{{pacienteId}}", "host": ["{{agendamentoBaseUrl}}"], "path": ["v1", "usuarios", "{{pacienteId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultas - Médico/Enfermeiro",
+      "item": [
+        {
+          "name": "Criar consulta (médico)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{medicoLogin}}", "type": "string" }, { "key": "password", "value": "{{medicoSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/v1/consultas", "host": ["{{agendamentoBaseUrl}}"], "path": ["v1", "consultas"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pacienteId\": {{pacienteId}},\n  \"medicoId\": {{medicoId}},\n  \"dataHora\": \"2027-01-15T10:00:00\",\n  \"observacoes\": \"Consulta de retorno\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar consulta (enfermeiro)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{enfermeiroLogin}}", "type": "string" }, { "key": "password", "value": "{{enfermeiroSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/v1/consultas", "host": ["{{agendamentoBaseUrl}}"], "path": ["v1", "consultas"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pacienteId\": {{pacienteId}},\n  \"medicoId\": {{medicoId}},\n  \"dataHora\": \"2027-02-10T14:30:00\",\n  \"observacoes\": \"Consulta registrada pelo enfermeiro\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Editar consulta (médico)",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{medicoLogin}}", "type": "string" }, { "key": "password", "value": "{{medicoSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/v1/consultas/{{consultaId}}", "host": ["{{agendamentoBaseUrl}}"], "path": ["v1", "consultas", "{{consultaId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dataHora\": \"2027-01-15T11:00:00\",\n  \"status\": \"REALIZADA\",\n  \"observacoes\": \"Consulta atualizada\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar todas as consultas (médico/enfermeiro)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{medicoLogin}}", "type": "string" }, { "key": "password", "value": "{{medicoSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/v1/consultas?page=1&size=10", "host": ["{{agendamentoBaseUrl}}"], "path": ["v1", "consultas"], "query": [ { "key": "page", "value": "1" }, { "key": "size", "value": "10" } ] }
+          }
+        },
+        {
+          "name": "Buscar consulta por id (médico)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{medicoLogin}}", "type": "string" }, { "key": "password", "value": "{{medicoSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/v1/consultas/{{consultaId}}", "host": ["{{agendamentoBaseUrl}}"], "path": ["v1", "consultas", "{{consultaId}}"] }
+          }
+        },
+        {
+          "name": "[Negativo] Paciente tenta criar consulta (403 esperado)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{pacienteLogin}}", "type": "string" }, { "key": "password", "value": "{{pacienteSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/v1/consultas", "host": ["{{agendamentoBaseUrl}}"], "path": ["v1", "consultas"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pacienteId\": {{pacienteId}},\n  \"medicoId\": {{medicoId}},\n  \"dataHora\": \"2027-03-01T09:00:00\",\n  \"observacoes\": \"Tentativa indevida\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultas - Paciente",
+      "item": [
+        {
+          "name": "Listar minhas consultas (paciente)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{pacienteLogin}}", "type": "string" }, { "key": "password", "value": "{{pacienteSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/v1/consultas?page=1&size=10", "host": ["{{agendamentoBaseUrl}}"], "path": ["v1", "consultas"], "query": [ { "key": "page", "value": "1" }, { "key": "size", "value": "10" } ] }
+          }
+        },
+        {
+          "name": "Buscar minha consulta por id (paciente)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{pacienteLogin}}", "type": "string" }, { "key": "password", "value": "{{pacienteSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/v1/consultas/{{consultaId}}", "host": ["{{agendamentoBaseUrl}}"], "path": ["v1", "consultas", "{{consultaId}}"] }
+          }
+        },
+        {
+          "name": "[Negativo] Paciente tenta ver consulta de outro paciente (403 esperado)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{pacienteLogin}}", "type": "string" }, { "key": "password", "value": "{{pacienteSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/v1/consultas/999", "host": ["{{agendamentoBaseUrl}}"], "path": ["v1", "consultas", "999"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "GraphQL - Histórico e Consultas",
+      "item": [
+        {
+          "name": "Histórico completo do paciente",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{medicoLogin}}", "type": "string" }, { "key": "password", "value": "{{medicoSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/graphql", "host": ["{{agendamentoBaseUrl}}"], "path": ["graphql"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { historicoPorPaciente(pacienteId: \\\"{{pacienteId}}\\\") { id pacienteId medicoId dataHora status observacoes } }\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Consultas futuras do paciente",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{medicoLogin}}", "type": "string" }, { "key": "password", "value": "{{medicoSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/graphql", "host": ["{{agendamentoBaseUrl}}"], "path": ["graphql"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { consultasFuturasPorPaciente(pacienteId: \\\"{{pacienteId}}\\\") { id dataHora status } }\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Buscar consulta específica por id",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{medicoLogin}}", "type": "string" }, { "key": "password", "value": "{{medicoSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/graphql", "host": ["{{agendamentoBaseUrl}}"], "path": ["graphql"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { consulta(id: \\\"{{consultaId}}\\\") { id pacienteId medicoId dataHora status observacoes } }\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Paciente consulta o próprio histórico",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{pacienteLogin}}", "type": "string" }, { "key": "password", "value": "{{pacienteSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/graphql", "host": ["{{agendamentoBaseUrl}}"], "path": ["graphql"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { historicoPorPaciente(pacienteId: \\\"{{pacienteId}}\\\") { id dataHora status } }\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Negativo] Paciente tenta ver histórico de outro paciente",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{pacienteLogin}}", "type": "string" }, { "key": "password", "value": "{{pacienteSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{agendamentoBaseUrl}}/graphql", "host": ["{{agendamentoBaseUrl}}"], "path": ["graphql"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { historicoPorPaciente(pacienteId: \\\"999\\\") { id status } }\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notificações",
+      "item": [
+        {
+          "name": "Listar notificações enviadas",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{staffLogin}}", "type": "string" }, { "key": "password", "value": "{{staffSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{notificacaoBaseUrl}}/v1/notificacoes?page=1&size=10", "host": ["{{notificacaoBaseUrl}}"], "path": ["v1", "notificacoes"], "query": [ { "key": "page", "value": "1" }, { "key": "size", "value": "10" } ] }
+          }
+        },
+        {
+          "name": "Listar notificações por paciente",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{staffLogin}}", "type": "string" }, { "key": "password", "value": "{{staffSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{notificacaoBaseUrl}}/v1/notificacoes?pacienteId={{pacienteId}}", "host": ["{{notificacaoBaseUrl}}"], "path": ["v1", "notificacoes"], "query": [ { "key": "pacienteId", "value": "{{pacienteId}}" } ] }
+          }
+        },
+        {
+          "name": "Buscar notificação por id",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [ { "key": "username", "value": "{{staffLogin}}", "type": "string" }, { "key": "password", "value": "{{staffSenha}}", "type": "string" } ]
+            },
+            "url": { "raw": "{{notificacaoBaseUrl}}/v1/notificacoes/{{notificacaoId}}", "host": ["{{notificacaoBaseUrl}}"], "path": ["v1", "notificacoes", "{{notificacaoId}}"] }
+          }
+        }
+      ]
+    }
+  ]
+}
