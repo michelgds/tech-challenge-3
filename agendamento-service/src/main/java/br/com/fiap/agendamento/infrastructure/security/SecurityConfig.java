@@ -34,7 +34,7 @@ public class SecurityConfig {
                         org.springframework.security.config.http.SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/v1/usuarios").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/v1/consultas").hasAnyRole("MEDICO", "ENFERMEIRO")
                         .requestMatchers(org.springframework.http.HttpMethod.PUT, "/v1/consultas/**").hasAnyRole("MEDICO", "ENFERMEIRO")
